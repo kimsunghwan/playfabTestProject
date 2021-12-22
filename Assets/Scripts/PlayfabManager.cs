@@ -235,4 +235,19 @@ public class PlayfabManager : MonoBehaviour {
             Debug.LogError(error.GenerateErrorReport());
         });
     }
+
+    public void StartCloudHelloWorld() {
+        var request = new PlayFab.CloudScriptModels.ExecuteFunctionRequest { FunctionName = "HttpExample" };
+        PlayFabCloudScriptAPI.ExecuteFunction(request, (result) => {
+            string log = "성공";
+            print(log);
+            this.TextLog.text = log;
+        Debug.Log(result.FunctionResult.ToString());
+        }, (error) => {
+            string log = "실패";
+            print(log);
+            this.TextLog.text = log;
+            Debug.LogError(error.GenerateErrorReport());
+        });
+    }
 }
