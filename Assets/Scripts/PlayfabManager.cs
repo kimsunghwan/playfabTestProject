@@ -49,7 +49,10 @@ public class PlayfabManager : MonoBehaviour {
 
     public void ButtonRegister() {
         var request = new RegisterPlayFabUserRequest {
-            Email = this.InputEmail.text, Password = this.InputPassword.text, Username = this.InputNickName.text, DisplayName = this.InputNickName.text
+            Email = this.InputEmail.text,
+            Password = this.InputPassword.text,
+            Username = this.InputNickName.text,
+            DisplayName = this.InputNickName.text
         };
         PlayFabClientAPI.RegisterPlayFabUser(request, (result) => {
             string log = "회원가입 성공";
@@ -116,16 +119,20 @@ public class PlayfabManager : MonoBehaviour {
             this.TextLog.text = "";
             foreach (var eachData in result.Data) {
                 this.TextLog.text += eachData.Key + " : " + eachData.Value.Value + "\n";
-            }}, (error) => {
-                string log = "데이터 불러오기 실패";
-                this.TextLog.text = log;
-                print(log);
-            });
+            }
+        }, (error) => {
+            string log = "데이터 불러오기 실패";
+            this.TextLog.text = log;
+            print(log);
+        });
     }
 
     public void GetLeaderboard() {
         var request = new GetLeaderboardRequest {
-            StartPosition = 0, StatisticName = "Input_1", MaxResultsCount = 20, ProfileConstraints = new PlayerProfileViewConstraints() { ShowLocations = true, ShowDisplayName = true }
+            StartPosition = 0,
+            StatisticName = "Input_1",
+            MaxResultsCount = 20,
+            ProfileConstraints = new PlayerProfileViewConstraints() { ShowLocations = true, ShowDisplayName = true }
         };
         PlayFabClientAPI.GetLeaderboard(request, (result) => {
             this.TextLog.text = "";
@@ -237,17 +244,39 @@ public class PlayfabManager : MonoBehaviour {
     }
 
     public void StartCloudHelloWorld() {
-        var request = new PlayFab.CloudScriptModels.ExecuteFunctionRequest { FunctionName = "HttpExample" };
-        PlayFabCloudScriptAPI.ExecuteFunction(request, (result) => {
+        var dicc = new Dictionary<string, object>();
+        dicc.Add("name", "kiki");
+        dicc.Add("power", "koko");
+        string json = "{\"name\": \"kiki\" }";
+        PlayFabCloudScriptAPI.ExecuteFunction(new PlayFab.CloudScriptModels.ExecuteFunctionRequest {
+            FunctionName = "HttpExample",
+            FunctionParameter = dicc,
+            GeneratePlayStreamEvent = false
+        }, (result) => {
             string log = "성공";
             print(log);
             this.TextLog.text = log;
-        Debug.Log(result.FunctionResult.ToString());
+            Debug.Log(result.FunctionResult.ToString());
         }, (error) => {
             string log = "실패";
             print(log);
             this.TextLog.text = log;
             Debug.LogError(error.GenerateErrorReport());
+        }); ;
+    }
+
+    public void CloudIncrement() {
+        PlayFabClientAPI.ExecuteCloudScript(new ExecuteCloudScriptRequest {
+            FunctionName = "IncrementReadOnlyUserData"
+        }, (result) => {
+            string log = "CloudScript call successful";
+            print(log);
+            this.TextLog.text = log;
+        }, (error) => {
+            string log = "CloudScript call failed";
+            print(log);
+            this.TextLog.text = log;
+            Debug.Log(error.GenerateErrorReport());
         });
     }
 }
