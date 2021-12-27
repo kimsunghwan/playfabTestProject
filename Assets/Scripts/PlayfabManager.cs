@@ -279,4 +279,18 @@ public class PlayfabManager : MonoBehaviour {
             Debug.Log(error.GenerateErrorReport());
         });
     }
+
+    public void GetServerTime() {
+        System.DateTime time = System.DateTime.Now;
+        PlayFabClientAPI.GetTime(new GetTimeRequest(), (result) => {
+            string log = string.Format("서버 타임 : {0}", result.Time.ToString());
+            print(log);
+            this.TextLog.text = log;
+        }, (error) => {
+            string log = "서버 타임 불러오기 실패";
+            print(log);
+            this.TextLog.text = log;
+            Debug.Log(error.GenerateErrorReport());
+        });
+    }
 }
